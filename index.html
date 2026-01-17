@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Ma Tirelire</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #e0f2fe 0%, #ffffff 50%, #dbeafe 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-top: 20px;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .logo-icon {
+            font-size: 40px;
+        }
+        
+        h1 {
+            color: #2563eb;
+            font-size: 28px;
+        }
+        
+        .subtitle {
+            color: #60a5fa;
+            font-size: 14px;
+        }
+        
+        .menu-btn {
+            background: white;
+            border: 2px solid #dbeafe;
+            border-radius: 12px;
+            padding: 12px 15px;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .menu {
+            background: white;
+            border: 2px solid #dbeafe;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            display: none;
+        }
+        
+        .menu.active {
+            display: block;
+        }
+        
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-bottom: 10px;
+            transition: all 0.3s;
+        }
+        
+        .menu-item:hover {
+            background: #eff6ff;
+        }
+        
+        .menu-item.active {
+            background: #3b82f6;
+            color: white;
+        }
+        
+        .card {
+            background: white;
+            border: 2px solid #dbeafe;
+            border-radius: 25px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        
+        .balance-label {
+            color: #6b7280;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+        
+        .balance {
+            font-size: 56px;
+            font-weight: bold;
+            background: linear-gradient(135deg, #2563eb 0%, #60a5fa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .progress-bar {
+            background: #e5e7eb;
+            height: 12px;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        
+        .progress-fill {
+            background: linear-gradient(90deg, #3b82f6 0%, #60a5fa 100%);
+            height: 100%;
+            transition: width 0.5s;
+        }
+        
+        .quick-amounts {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .quick-btn {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 15px 5px;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(59, 130, 246, 0.3);
+            transition: transform 0.2s;
+        }
+        
+        .quick-btn:active {
+            transform: scale(0.95);
+        }
+        
+        input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #dbeafe;
+            border-radius: 12px;
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #3b82f6;
+        }
+        
+        .action-btns {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        
+        .btn {
+            padding: 15px;
+            border: none;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+        
+        .btn:disabled {
+            background: #e5e7eb;
+            cursor: not-allowed;
+        }
+        
+        .btn-add {
+            background: #3b82f6;
+            color: white;
+        }
+        
+        .btn-remove {
+            background: #6b7280;
+            color: white;
+        }
+        
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+        }
+        
+        .transaction {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+        }
+        
+        .transaction-add {
+            background: #eff6ff;
+            border: 1px solid #dbeafe;
+        }
+        
+        .transaction-remove {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+        }
+        
+        .transaction-reset {
+            background: #fee2e2;
+            border: 1px solid #fecaca;
+        }
+        
+        .view {
+            display: none;
+        }
+        
+        .view.active {
+            display: block;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 50px 20px;
+            color: #9ca3af;
+        }
+        
+        .empty-icon {
+            font-size: 64px;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">
+                <div class="logo-icon">🐷</div>
+                <div>
+                    <h1>Ma Tirelire</h1>
+                    <div class="subtitle">Économisez facilement</div>
+                </div>
+            </div>
+            <button class="menu-btn" onclick="toggleMenu()">☰</button>
+        </div>
+
+        <div class="menu" id="menu">
+            <div class="menu-item active" onclick="showView('main')">
+                🏠 <span>Accueil</span>
+            </div>
+            <div class="menu-item" onclick="showView('goal')">
+                🎯 <span>Objectifs</span>
+            </div>
+            <div class="menu-item" onclick="showView('history')">
+                📜 <span>Historique</span> <span id="transactionCount" style="margin-left: auto;"></span>
+            </div>
+            <div class="menu-item" onclick="showView('settings')">
+                ⚙️ <span>Paramètres</span>
+            </div>
+        </div>
+
+        <!-- Vue Principale -->
+        <div id="mainView" class="view active">
+            <div class="card">
+                <div class="balance-label">Solde Total</div>
+                <div class="balance" id="balance">0.00€</div>
+                
+                <div id="goalProgress" style="display: none;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 14px;">
+                        <span id="goalLabel"></span>
+                        <span id="goalPercent" style="color: #2563eb; font-weight: bold;"></span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-top: 5px; font-size: 12px; color: #6b7280;">
+                        <span id="remaining"></span>
+                        <span style="color: #ef4444; cursor: pointer;" onclick="removeGoal()">Supprimer</span>
+                    </div>
+                </div>
+                
+                <div id="addGoalBtn" style="text-align: center; margin-top: 15px;">
+                    <button style="background: none; border: none; color: #3b82f6; cursor: pointer; font-weight: 600;" onclick="showGoalInput()">+ Définir un objectif</button>
+                </div>
+                
+                <div id="goalInputSection" style="display: none; margin-top: 15px;">
+                    <div style="display: flex; gap: 8px;">
+                        <input type="number" id="goalInput" placeholder="Objectif en €" step="0.01" min="0">
+                        <button class="btn btn-add" style="width: auto; padding: 10px 20px;" onclick="setGoal()">OK</button>
+                        <button class="btn" style="width: auto; padding: 10px 20px; background: #e5e7eb;" onclick="hideGoalInput()">✕</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2 style="margin-bottom: 15px;">Montants rapides</h2>
+                <div class="quick-amounts">
+                    <button class="quick-btn" onclick="addMoney(5)">5€</button>
+                    <button class="quick-btn" onclick="addMoney(10)">10€</button>
+                    <button class="quick-btn" onclick="addMoney(20)">20€</button>
+                    <button class="quick-btn" onclick="addMoney(50)">50€</button>
+                    <button class="quick-btn" onclick="addMoney(100)">100€</button>
+                </div>
+
+                <h2 style="margin-bottom: 15px; margin-top: 20px;">Montant personnalisé</h2>
+                <input type="number" id="customAmount" placeholder="Montant..." step="0.01" min="0">
+                
+                <div class="action-btns">
+                    <button class="btn btn-add" onclick="addCustomAmount()">
+                        ➕ Ajouter
+                    </button>
+                    <button class="btn btn-remove" onclick="removeCustomAmount()">
+                        ➖ Retirer
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Vue Objectifs -->
+        <div id="goalView" class="view">
+            <div class="card">
+                <h2 style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px;">
+                    🎯 Gérer mon objectif
+                </h2>
+                <div id="goalContent"></div>
+            </div>
+        </div>
+
+        <!-- Vue Historique -->
+        <div id="historyView" class="view">
+            <div class="card">
+                <h2 style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px;">
+                    📜 Historique des transactions
+                </h2>
+                <div id="historyContent"></div>
+            </div>
+        </div>
+
+        <!-- Vue Paramètres -->
+        <div id="settingsView" class="view">
+            <div class="card">
+                <h2 style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px;">
+                    ⚙️ Paramètres
+                </h2>
+                <div style="background: #eff6ff; border: 2px solid #dbeafe; border-radius: 15px; padding: 20px; margin-bottom: 20px;">
+                    <h3 style="margin-bottom: 10px;">Solde total</h3>
+                    <div style="font-size: 32px; font-weight: bold; color: #2563eb; margin-bottom: 15px;" id="settingsBalance">0.00€</div>
+                    <button class="btn btn-danger" id="resetBtn" onclick="resetPiggyBank()" style="width: 100%;">
+                        🗑️ Vider la tirelire
+                    </button>
+                </div>
+                
+                <div style="background: #f9fafb; border: 2px solid #e5e7eb; border-radius: 15px; padding: 20px;">
+                    <h3 style="margin-bottom: 10px;">Statistiques</h3>
+                    <div id="stats" style="color: #6b7280;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let balance = parseFloat(localStorage.getItem('balance')) || 0;
+        let goal = parseFloat(localStorage.getItem('goal')) || null;
+        let transactions = JSON.parse(localStorage.getItem('transactions')) || [];
+
+        function updateDisplay() {
+            document.getElementById('balance').textContent = balance.toFixed(2) + '€';
+            document.getElementById('settingsBalance').textContent = balance.toFixed(2) + '€';
+            
+            if (goal) {
+                const percentage = Math.min((balance / goal) * 100, 100);
+                document.getElementById('goalProgress').style.display = 'block';
+                document.getElementById('addGoalBtn').style.display = 'none';
+                document.getElementById('goalLabel').textContent = 'Objectif: ' + goal.toFixed(2) + '€';
+                document.getElementById('goalPercent').textContent = percentage.toFixed(0) + '%';
+                document.getElementById('progressFill').style.width = percentage + '%';
+                document.getElementById('remaining').textContent = 'Reste: ' + Math.max(0, goal - balance).toFixed(2) + '€';
+            } else {
+                document.getElementById('goalProgress').style.display = 'none';
+                document.getElementById('addGoalBtn').style.display = 'block';
+            }
+            
+            const count = transactions.length;
+            if (count > 0) {
+                document.getElementById('transactionCount').innerHTML = '<span style="background: #dbeafe; color: #2563eb; padding: 2px 8px; border-radius: 10px; font-size: 12px; font-weight: bold;">' + count + '</span>';
+            }
+            
+            updateGoalView();
+            updateHistoryView();
+            updateSettingsView();
+        }
+
+        function addMoney(amount) {
+            const newBalance = balance + amount;
+            balance = newBalance;
+            localStorage.setItem('balance', balance);
+            
+            transactions.unshift({
+                type: 'add',
+                amount: amount,
+                date: new Date().toLocaleString('fr-FR'),
+                id: Date.now()
+            });
+            if (transactions.length > 10) transactions.pop();
+            localStorage.setItem('transactions', JSON.stringify(transactions));
+            
+            updateDisplay();
+            
+            if (goal && newBalance >= goal) {
+                setTimeout(() => alert('🎉 Félicitations ! Vous avez atteint votre objectif de ' + goal.toFixed(2) + '€ !'), 300);
+            }
+        }
+
+        function addCustomAmount() {
+            const input = document.getElementById('customAmount');
+            const amount = parseFloat(input.value);
+            if (amount && amount > 0) {
+                addMoney(amount);
+                input.value = '';
+            }
+        }
+
+        function removeCustomAmount() {
+            const input = document.getElementById('customAmount');
+            const amount = parseFloat(input.value);
+            if (amount && amount > 0 && amount <= balance) {
+                balance -= amount;
+                localStorage.setItem('balance', balance);
+                
+                transactions.unshift({
+                    type: 'remove',
+                    amount: amount,
+                    date: new Date().toLocaleString('fr-FR'),
+                    id: Date.now()
+                });
+                if (transactions.length > 10) transactions.pop();
+                localStorage.setItem('transactions', JSON.stringify(transactions));
+                
+                input.value = '';
+                updateDisplay();
+            }
+        }
+
+        function showGoalInput() {
+            document.getElementById('goalInputSection').style.display = 'block';
+            document.getElementById('addGoalBtn').style.display = 'none';
+        }
+
+        function hideGoalInput() {
+            document.getElementById('goalInputSection').style.display = 'none';
+            document.getElementById('addGoalBtn').style.display = 'block';
+        }
+
+        function setGoal() {
+            const input = document.getElementById('goalInput');
+            const amount = parseFloat(input.value);
+            if (amount && amount > 0) {
+                goal = amount;
+                localStorage.setItem('goal', goal);
+                input.value = '';
+                hideGoalInput();
+                updateDisplay();
+            }
+        }
+
+        function removeGoal() {
+            goal = null;
+            localStorage.removeItem('goal');
+            updateDisplay();
+        }
+
+        function resetPiggyBank() {
+            if (confirm('Êtes-vous sûr de vouloir vider la tirelire de ' + balance.toFixed(2) + '€ ?')) {
+                transactions.unshift({
+                    type: 'reset',
+                    amount: balance,
+                    date: new Date().toLocaleString('fr-FR'),
+                    id: Date.now()
+                });
+                if (transactions.length > 10) transactions.pop();
+                localStorage.setItem('transactions', JSON.stringify(transactions));
+                
+                balance = 0;
+                localStorage.setItem('balance', balance);
+                updateDisplay();
+            }
+        }
+
+        function toggleMenu() {
+            document.getElementById('menu').classList.toggle('active');
+        }
+
+        function showView(viewName) {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
+            
+            document.getElementById(viewName + 'View').classList.add('active');
+            event.target.closest('.menu-item').classList.add('active');
+            
+            document.getElementById('menu').classList.remove('active');
+            updateDisplay();
+        }
+
+        function updateGoalView() {
+            const content = document.getElementById('goalContent');
+            if (goal) {
+                const percentage = Math.min((balance / goal) * 100, 100);
+                content.innerHTML = `
+                    <div style="background: #eff6ff; border: 2px solid #dbeafe; border-radius: 15px; padding: 20px; margin-bottom: 20px;">
+                        <p style="font-size: 14px; color: #6b7280; margin-bottom: 5px;">Objectif actuel</p>
+                        <p style="font-size: 36px; font-weight: bold; color: #2563eb; margin-bottom: 15px;">${goal.toFixed(2)}€</p>
+                        
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 14px;">
+                            <span>Progression</span>
+                            <span style="color: #2563eb; font-weight: bold;">${percentage.toFixed(0)}%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${percentage}%"></div>
+                        </div>
+                        
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px;">
+                            <div style="background: white; border-radius: 12px; padding: 15px; text-align: center;">
+                                <p style="font-size: 12px; color: #6b7280; margin-bottom: 5px;">Solde actuel</p>
+                                <p style="font-size: 18px; font-weight: bold;">${balance.toFixed(2)}€</p>
+                            </div>
+                            <div style="background: white; border-radius: 12px; padding: 15px; text-align: center;">
+                                <p style="font-size: 12px; color: #6b7280; margin-bottom: 5px;">Reste</p>
+                                <p style="font-size: 18px; font-weight: bold;">${Math.max(0, goal - balance).toFixed(2)}€</p>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="btn btn-danger" onclick="removeGoal()" style="width: 100%;">
+                        🗑️ Supprimer l'objectif
+                    </button>
+                `;
+            } else {
+                content.innerHTML = `
+                    <p style="color: #6b7280; margin-bottom: 20px;">Définissez un objectif d'épargne pour suivre votre progression et rester motivé !</p>
+                    <input type="number" id="goalViewInput" placeholder="Montant de l'objectif en €" step="0.01" min="0">
+                    <button class="btn btn-add" onclick="setGoalFromView()" style="width: 100%;">
+                        Définir l'objectif
+                    </button>
+                `;
+            }
+        }
+
+        function setGoalFromView() {
+            const input = document.getElementById('goalViewInput');
+            const amount = parseFloat(input.value);
+            if (amount && amount > 0) {
+                goal = amount;
+                localStorage.setItem('goal', goal);
+                updateDisplay();
+            }
+        }
+
+        function updateHistoryView() {
+            const content = document.getElementById('historyContent');
+            if (transactions.length === 0) {
+                content.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">📜</div>
+                        <p>Aucune transaction pour le moment</p>
+                    </div>
+                `;
+            } else {
+                let html = '';
+                transactions.forEach(t => {
+                    const typeClass = t.type === 'add' ? 'transaction-add' : t.type === 'remove' ? 'transaction-remove' : 'transaction-reset';
+                    const icon = t.type === 'add' ? '➕' : t.type === 'remove' ? '➖' : '🗑️';
+                    const color = t.type === 'add' ? '#2563eb' : t.type === 'remove' ? '#6b7280' : '#ef4444';
+                    const label = t.type === 'add' ? 'Ajout' : t.type === 'remove' ? 'Retrait' : 'Vidage';
+                    
+                    html += `
+                        <div class="transaction ${typeClass}">
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <span style="font-size: 20px;">${icon}</span>
+                                <div>
+                                    <div style="font-weight: 600;">${label}</div>
+                                    <div style="font-size: 12px; color: #6b7280;">${t.date}</div>
+                                </div>
+                            </div>
+                            <div style="font-size: 18px; font-weight: bold; color: ${color};">
+                                ${t.type === 'add' ? '+' : '-'}${t.amount.toFixed(2)}€
+                            </div>
+                        </div>
+                    `;
+                });
+                content.innerHTML = html;
+            }
+        }
+
+        function updateSettingsView() {
+            const percentage = goal ? Math.min((balance / goal) * 100, 100) : 0;
+            document.getElementById('stats').innerHTML = `
+                <p style="margin-bottom: 8px;">• Transactions totales: ${transactions.length}</p>
+                <p style="margin-bottom: 8px;">• Objectif: ${goal ? goal.toFixed(2) + '€' : 'Aucun'}</p>
+                ${goal ? '<p>• Progression: ' + percentage.toFixed(1) + '%</p>' : ''}
+            `;
+            
+            document.getElementById('resetBtn').style.display = balance > 0 ? 'flex' : 'none';
+        }
+
+        updateDisplay();
+    </script>
+</body>
+</html>
